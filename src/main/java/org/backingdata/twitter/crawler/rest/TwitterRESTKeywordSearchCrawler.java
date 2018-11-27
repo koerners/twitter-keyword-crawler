@@ -150,7 +150,6 @@ public class TwitterRESTKeywordSearchCrawler {
                                         Status status = result.getTweets().get(i);
 
                                         if (status != null && status.getCreatedAt() != null) {
-                                            if (status.getGeoLocation() != null || status.getUser().getLocation().equals("Lyon, France")) {
                                                 System.out.println("@ " + status.getGeoLocation() + " \n Message: " + status.getText() + "\n From: " + status.getUser().getLocation());
                                                 String msg = DataObjectFactory.getRawJSON(status);
                                                 if (msg == null) {
@@ -160,7 +159,7 @@ public class TwitterRESTKeywordSearchCrawler {
 
                                                 tweetsToStore.add(msg);
                                                 retrievedTweetCounter++;
-                                            }
+
                                         }
                                     }
                                 } else {
@@ -393,7 +392,7 @@ public class TwitterRESTKeywordSearchCrawler {
 
         System.out.println("-----------------------------------------------------------------------------------");
         System.out.println("YOU'RE GOING TO USE " + ((consumerKey != null) ? consumerKey.size() : "ERROR") + " TWITTER DEVELOPER CREDENTIAL(S).");
-        System.out.println("INCREASE YOUR CREDENTIAL NUMBER IN THE CONFIGURATION FILE IF YOU NEED TO INCREASE CRAWLING SPEED");
+        //System.out.println("INCREASE YOUR CREDENTIAL NUMBER IN THE CONFIGURATION FILE IF YOU NEED TO INCREASE CRAWLING SPEED");
         System.out.println("-----------------------------------------------------------------------------------\n");
 
 

@@ -1,17 +1,7 @@
 package org.backingdata.twitter.crawler;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Vector;
 
-import twitter4j.Paging;
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
+import twitter4j.*;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -19,19 +9,7 @@ public class KeywordCrawl {
 
 	public static void main(String[] args) {
 
-        Vector geo = new Vector();
-
-
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter("log.txt", StandardCharsets.UTF_8);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        GeoLocation Lyon = new GeoLocation(45.759491, 4.841083); // -> Lyon, France
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
         //cb.setDebugEnabled(true).setJSONStoreEnabled(true);
@@ -49,18 +27,15 @@ public class KeywordCrawl {
         for (String key : keywords) {
             Query query = new Query(key);
             query.count(100);
+            query.setGeoCode(Lyon, 100, Query.Unit.km);
             QueryResult result;
             try {
                 result = twitter.search(query);
                 Integer countTw = 1;
                 System.out.println("Query result for " + key + ":");
                 for (Status status : result.getTweets()) {
-                    System.out.println(countTw++ + " > @" + status.getUser().getScreenName() + " (" + status.getCreatedAt().toString() + ") : " + status.getText() + "\n");
-                    writer.println(countTw + " > @" + status.getUser().getScreenName() + " (" + status.getCreatedAt().toString() + ") : " + status.getText() + "\n");
+                    System.out.println(countTw++ + " > @" + status.getUser().getScreenName() + " (" + status.getCreatedAt().toString() + ") : " + status.getText() + " Location: " + status.getUser().getLocation() + "\n");
 
-                    if (status.getGeoLocation() != null) {
-                        geo.add(status);
-                    }
 
                 }
             } catch (TwitterException e) {
@@ -68,13 +43,8 @@ public class KeywordCrawl {
                 e.printStackTrace();
             }
 
-            if (writer != null) {
-                writer.close();
-            }
-
         }
 
-        System.out.println(geo.toString());
 	}
 
 }
