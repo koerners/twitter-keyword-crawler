@@ -2,8 +2,7 @@ package org.backingdata.twitter.crawler;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.logging.Logger;
+import java.util.Vector;
 
 import twitter4j.Paging;
 import twitter4j.Query;
@@ -19,6 +18,8 @@ import twitter4j.conf.ConfigurationBuilder;
 public class KeywordCrawl {
 
 	public static void main(String[] args) {
+
+        Vector geo = new Vector();
 
 
         PrintWriter writer = null;
@@ -42,7 +43,7 @@ public class KeywordCrawl {
 		twitter.setOAuthAccessToken(accessToken);
 
 
-        String[] keywords = {"sick", "bad", "unwell"};
+        String[] keywords = {"I am sick", "Je suis mal"};
 
 
         for (String key : keywords) {
@@ -57,17 +58,23 @@ public class KeywordCrawl {
                     System.out.println(countTw++ + " > @" + status.getUser().getScreenName() + " (" + status.getCreatedAt().toString() + ") : " + status.getText() + "\n");
                     writer.println(countTw + " > @" + status.getUser().getScreenName() + " (" + status.getCreatedAt().toString() + ") : " + status.getText() + "\n");
 
+                    if (status.getGeoLocation() != null) {
+                        geo.add(status);
+                    }
+
                 }
             } catch (TwitterException e) {
                 System.out.println("Exception while searching for tweets by a query string: " + e.getMessage());
                 e.printStackTrace();
             }
+
+            if (writer != null) {
+                writer.close();
+            }
+
         }
 
-
-        if (writer != null) {
-            writer.close();
-		}
+        System.out.println(geo.toString());
 	}
 
 }
