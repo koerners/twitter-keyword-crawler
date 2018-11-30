@@ -16,13 +16,12 @@ public class KeywordCrawl {
 
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter("test.csv", "UTF-8");
+            writer = new PrintWriter("/home/stefan/twitter-keyword-crawler/visualize/test.csv", "UTF-8");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        writer.println("cities");
 
 
 
