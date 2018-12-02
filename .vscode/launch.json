@@ -1,0 +1,37 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - KeywordCrawlerSmall",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "org.backingdata.twitter.crawler.KeywordCrawlerSmall",
+            "args": "",
+            "projectName": "twitter-crawler"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TwitterRESTKeywordSearchCrawler",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "org.backingdata.twitter.crawler.rest.TwitterRESTKeywordSearchCrawler",
+            "args": "/home/stefan/twitter-keyword-crawler/src/main/resources/crawler.properties",
+            "projectName": "twitter-crawler"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - KeywordCrawl",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "org.backingdata.twitter.crawler.KeywordCrawl",
+            "args": "",
+            "projectName": "twitter-crawler"
+        }
+    ]
+}

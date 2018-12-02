@@ -7,24 +7,32 @@ function preload() {
 function setup() {
 
 
-    var canvas = createCanvas(50, 20);    //dataSource = select('#file');
+    var canvas = createCanvas(50, 20);
     canvas.parent('sketch-holder');
     noLoop();
 
 
-    button = createButton('load file');
+
+    button = createButton('process');
     button.position(8, 5);
     button.mousePressed(processData);
 
-    //processData();
+    button1 = createButton('reload');
+    button1.position(100, 5);
+    button1.mousePressed(reloadPage);
 
+
+}
+
+function reloadPage() {
+    document.location.reload(true);
 }
 
 function draw() {
     clear();
     for (let country of data) {
         var latlng = L.latLng(country.lat, country.lon);
-        L.marker(latlng).addTo(mymap);
+        L.marker(latlng, title='test').addTo(mymap);
     }
 }
 
@@ -56,7 +64,7 @@ function request(city) {
 
 
 function processData() {
-   // request('munich');
+    // request('munich');
 
 
 

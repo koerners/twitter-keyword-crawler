@@ -27,7 +27,6 @@ import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.json.DataObjectFactory;
 
-
 public class TwitterRESTKeywordSearchCrawler {
 
     public static GeoLocation loc = new GeoLocation(45.759491, 4.841083);
@@ -37,7 +36,8 @@ public class TwitterRESTKeywordSearchCrawler {
     private static List<String> consumerSecret = new ArrayList<String>();
     private static List<String> token = new ArrayList<String>();
     private static List<String> tokenSecret = new ArrayList<String>();
-    // Full local path of a local text file containing a list of tweet terms (one per line)
+    // Full local path of a local text file containing a list of tweet terms (one
+    // per line)
     private static String fullPathOfTweetKeywordFile = "";
     // Terms
     private static Set<String> getKeywords = new HashSet<String>();
@@ -49,7 +49,6 @@ public class TwitterRESTKeywordSearchCrawler {
     private static String languageFilter = "";
 
     private static String fileSharedName = "tweet_by_keyword";
-
 
     // Blocking queue for tweets to process
     private static Integer sleepTimeInMilliseconds = 5000;
@@ -88,7 +87,8 @@ public class TwitterRESTKeywordSearchCrawler {
 
                         File storageDir = new File(outputDirPath);
                         PrintWriter twitterKeywordPW = null;
-                        String fileName = storageDir.getAbsolutePath() + "/" + fileSharedName + "_" + entry.replaceAll("\\W+", "") + "_upTo_" + sdf.format(new Date()) + ".txt";
+                        String fileName = storageDir.getAbsolutePath() + "/" + fileSharedName + "_"
+                                + entry.replaceAll("\\W+", "") + "_upTo_" + sdf.format(new Date()) + ".txt";
                         try {
                             twitterKeywordPW = new PrintWriter(fileName, StandardCharsets.UTF_8);
                         } catch (FileNotFoundException e) {
@@ -107,8 +107,7 @@ public class TwitterRESTKeywordSearchCrawler {
                             query.setLang(languageFilter);
                         }
 
-
-                        query.setGeoCode(loc, 100, Query.Unit.km);
+                        //query.setGeoCode(loc, 100, Query.Unit.km);
                         query.setSince("2018-01-01");
 
                         int numberOfTweets = 300;
@@ -141,24 +140,30 @@ public class TwitterRESTKeywordSearchCrawler {
                                     System.out.println("No tweets retrieved when paging - keyword: " + entry);
                                     break;
                                 } else {
-                                    System.out.println(result.getTweets().size() + " results found when paging (max ID: " + query.getMaxId() + ") - total results: " + (result.getTweets().size() + retrievedTweetCounter) + " - keyword: '" + entry + "' - waiting " + sleepTimeInMilliseconds + " milliseconds...");
+                                    System.out.println(result.getTweets().size()
+                                            + " results found when paging (max ID: " + query.getMaxId()
+                                            + ") - total results: "
+                                            + (result.getTweets().size() + retrievedTweetCounter) + " - keyword: '"
+                                            + entry + "' - waiting " + sleepTimeInMilliseconds + " milliseconds...");
                                 }
 
                                 if (result.getTweets() != null && result.getTweets().size() > 0) {
-                                    logger.info("Retrieved " + result.getTweets().size() + " tweets - keyword: " + entry);
+                                    logger.info(
+                                            "Retrieved " + result.getTweets().size() + " tweets - keyword: " + entry);
                                     for (int i = 0; i < result.getTweets().size(); i++) {
                                         Status status = result.getTweets().get(i);
 
                                         if (status != null && status.getCreatedAt() != null) {
-                                                System.out.println("@ " + status.getGeoLocation() + " \n Message: " + status.getText() + "\n From: " + status.getUser().getLocation());
-                                                String msg = DataObjectFactory.getRawJSON(status);
-                                                if (msg == null) {
-                                                    System.out.println("ERROR > INVALID TWEET RETRIEVED!");
-                                                    continue;
-                                                }
+                                            System.out.println("@ " + status.getGeoLocation() + " \n Message: "
+                                                    + status.getText() + "\n From: " + status.getUser().getLocation());
+                                            String msg = DataObjectFactory.getRawJSON(status);
+                                            if (msg == null) {
+                                                System.out.println("ERROR > INVALID TWEET RETRIEVED!");
+                                                continue;
+                                            }
 
-                                                tweetsToStore.add(msg);
-                                                retrievedTweetCounter++;
+                                            tweetsToStore.add(msg);
+                                            retrievedTweetCounter++;
 
                                         }
                                     }
@@ -180,31 +185,25 @@ public class TwitterRESTKeywordSearchCrawler {
 
                             query.setMaxId(lastID - 1);
 
-
                             // Store to file
                             if (tweetsToStore.size() > 5) {
-                                System.out.println("\nStoring " + tweetsToStore.size() + " tweets in " + outpuTweetFormat + " format:");
+                                // System.out.println("\nStoring " + tweetsToStore.size() + " tweets in " +
+                                // outpuTweetFormat + " format:");
                                 int storageCount = 0;
                                 for (String tweet : tweetsToStore) {
 
                                     if (tweet != null) {
-                                        if (outpuTweetFormat.equals("tab")) {
-                                            Status status = DataObjectFactory.createStatus(tweet);
-                                            twitterKeywordPW.write(status.getId() + "\t" + ((status.getText() != null) ? status.getText().replace("\n", " ") : "") + "\n");
-                                            storageCount++;
-                                        } else {
-
-                                            twitterKeywordPW.write(tweet + "\n");
+                                        Status status = DataObjectFactory.createStatus(tweet);
+                                        if (status.getUser().getLocation() != null && !status.getUser().getLocation().equals(" ")) {
+                                            twitterKeywordPW.write(status.getUser().getLocation() + "\n");
                                             storageCount++;
                                         }
                                     }
-
                                 }
 
                                 tweetsToStore = new ArrayList<String>();
                                 System.out.println(storageCount + " tweet stored to file: " + fileName);
                             }
-
 
                             twitterKeywordPW.flush();
 
@@ -229,10 +228,10 @@ public class TwitterRESTKeywordSearchCrawler {
 
         File crawlerPropertyFile = new File(args[0].trim());
         if (crawlerPropertyFile == null || !crawlerPropertyFile.exists() || !crawlerPropertyFile.isFile()) {
-            System.out.println("The path of the crawler ptoperty file (first argument) is wrongly specified > PATH: '" + ((args[0] != null) ? args[0].trim() : "NULL") + "'");
+            System.out.println("The path of the crawler ptoperty file (first argument) is wrongly specified > PATH: '"
+                    + ((args[0] != null) ? args[0].trim() : "NULL") + "'");
             return;
         }
-
 
         // Load information from property file
         PropertyManager propManager = new PropertyManager();
@@ -249,7 +248,8 @@ public class TwitterRESTKeywordSearchCrawler {
                     token.add(credentialObj.getToken());
                     tokenSecret.add(credentialObj.getTokenSecret());
                 } else {
-                    System.out.println("      - ERROR > INVALID CREDENTIAL SET: " + ((credentialObj != null) ? credentialObj.toString() : "NULL OBJECT"));
+                    System.out.println("      - ERROR > INVALID CREDENTIAL SET: "
+                            + ((credentialObj != null) ? credentialObj.toString() : "NULL OBJECT"));
                 }
             }
         }
@@ -259,8 +259,9 @@ public class TwitterRESTKeywordSearchCrawler {
             String keywordlistFilePath = propManager.getProperty(PropertyManager.RESTtweetKeywordListPath);
             File tweetIDfile = new File(keywordlistFilePath);
             if (tweetIDfile == null || !tweetIDfile.exists() || !tweetIDfile.isFile()) {
-                System.out.println("ERROR: keyword list input file path (property '" + PropertyManager.RESTtweetKeywordListPath + "')"
-                        + " wrongly specified > PATH: '" + ((keywordlistFilePath != null) ? keywordlistFilePath : "NULL") + "'");
+                System.out.println("ERROR: keyword list input file path (property '"
+                        + PropertyManager.RESTtweetKeywordListPath + "')" + " wrongly specified > PATH: '"
+                        + ((keywordlistFilePath != null) ? keywordlistFilePath : "NULL") + "'");
                 if (tweetIDfile != null && !tweetIDfile.exists()) {
                     System.out.println("      The file does not exist!");
                 }
@@ -272,18 +273,21 @@ public class TwitterRESTKeywordSearchCrawler {
                 fullPathOfTweetKeywordFile = keywordlistFilePath;
             }
         } catch (Exception e) {
-            System.out.println("ERROR: keyword list input file path (property '" + PropertyManager.RESTtweetKeywordListPath + "')"
-                    + " wrongly specified - exception: " + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
+            System.out.println("ERROR: keyword list input file path (property '"
+                    + PropertyManager.RESTtweetKeywordListPath + "')" + " wrongly specified - exception: "
+                    + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
             return;
         }
 
         // Load full path of output directory
         try {
-            String outputDirectoryFilePath = propManager.getProperty(PropertyManager.RESTtweetKeywordFullPathOfOutputDir);
+            String outputDirectoryFilePath = propManager
+                    .getProperty(PropertyManager.RESTtweetKeywordFullPathOfOutputDir);
             File outputDirFile = new File(outputDirectoryFilePath);
             if (outputDirFile == null || !outputDirFile.exists() || !outputDirFile.isDirectory()) {
-                System.out.println("ERROR: output directory full path (property '" + PropertyManager.RESTtweetKeywordFullPathOfOutputDir + "')"
-                        + " wrongly specified > PATH: '" + ((outputDirectoryFilePath != null) ? outputDirectoryFilePath : "NULL") + "'");
+                System.out.println("ERROR: output directory full path (property '"
+                        + PropertyManager.RESTtweetKeywordFullPathOfOutputDir + "')" + " wrongly specified > PATH: '"
+                        + ((outputDirectoryFilePath != null) ? outputDirectoryFilePath : "NULL") + "'");
                 if (outputDirFile != null && !outputDirFile.exists()) {
                     System.out.println("      The directory does not exist!");
                 }
@@ -295,8 +299,9 @@ public class TwitterRESTKeywordSearchCrawler {
                 outputDirPath = outputDirectoryFilePath;
             }
         } catch (Exception e) {
-            System.out.println("ERROR: output directory full path (property '" + PropertyManager.RESTtweetIDfullPathOfOutputDir + "')"
-                    + " wrongly specified - exception: " + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
+            System.out.println("ERROR: output directory full path (property '"
+                    + PropertyManager.RESTtweetIDfullPathOfOutputDir + "')" + " wrongly specified - exception: "
+                    + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
             return;
         }
 
@@ -310,14 +315,15 @@ public class TwitterRESTKeywordSearchCrawler {
                 outpuTweetFormat = "tab";
             } else {
                 outpuTweetFormat = "json";
-                System.out.println("Impossible to read the '" + PropertyManager.RESTtweetKeywordOutputFormat + "' property - set to: " + outpuTweetFormat);
+                System.out.println("Impossible to read the '" + PropertyManager.RESTtweetKeywordOutputFormat
+                        + "' property - set to: " + outpuTweetFormat);
             }
 
         } catch (Exception e) {
-            System.out.println("ERROR: output format (property '" + PropertyManager.RESTtweetKeywordOutputFormat + "') - exception: " + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
+            System.out.println("ERROR: output format (property '" + PropertyManager.RESTtweetKeywordOutputFormat
+                    + "') - exception: " + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
             return;
         }
-
 
         // Language filter
         try {
@@ -327,18 +333,20 @@ public class TwitterRESTKeywordSearchCrawler {
                 languageFilter = langFilter;
             } else {
                 languageFilter = "";
-                System.out.println("Impossible to read the '" + PropertyManager.RESTtweetKeywordLimitByLanguage + "' property - Language filter not set");
+                System.out.println("Impossible to read the '" + PropertyManager.RESTtweetKeywordLimitByLanguage
+                        + "' property - Language filter not set");
             }
 
         } catch (Exception e) {
-            System.out.println("ERROR: output format (property '" + PropertyManager.RESTtweetKeywordLimitByLanguage + "') - exception: " + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
+            System.out.println("ERROR: output format (property '" + PropertyManager.RESTtweetKeywordLimitByLanguage
+                    + "') - exception: " + ((e.getMessage() != null) ? e.getMessage() : "NULL"));
             return;
         }
 
-
         // Loading tweet keywords from file
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fullPathOfTweetKeywordFile)), StandardCharsets.UTF_8));
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(new File(fullPathOfTweetKeywordFile)), StandardCharsets.UTF_8));
 
             String str;
             while ((str = in.readLine()) != null) {
@@ -349,26 +357,31 @@ public class TwitterRESTKeywordSearchCrawler {
 
             in.close();
         } catch (Exception e) {
-            System.out.println("Exception reading keywords from file: " + e.getMessage() + " > PATH: '" + ((fullPathOfTweetKeywordFile != null) ? fullPathOfTweetKeywordFile : "NULL") + "'");
+            System.out.println("Exception reading keywords from file: " + e.getMessage() + " > PATH: '"
+                    + ((fullPathOfTweetKeywordFile != null) ? fullPathOfTweetKeywordFile : "NULL") + "'");
             return;
         }
 
-
         File storageDir = new File(outputDirPath);
-
 
         // Printing arguments:
         System.out.println("\n***************************************************************************************");
         System.out.println("******************** LOADED PARAMETERS ************************************************");
-        System.out.println("   > Property file loaded from path: '" + ((args[0].trim() != null) ? args[0].trim() : "NULL") + "'");
+        System.out.println(
+                "   > Property file loaded from path: '" + ((args[0].trim() != null) ? args[0].trim() : "NULL") + "'");
         System.out.println("        PROPERTIES:");
-        System.out.println("           - NUMBER OF TWITTER API CREDENTIALS: " + ((consumerKey != null) ? consumerKey.size() : "ERROR"));
+        System.out.println("           - NUMBER OF TWITTER API CREDENTIALS: "
+                + ((consumerKey != null) ? consumerKey.size() : "ERROR"));
         System.out.println("           - LANGUAGE FILTER: " + ((languageFilter != null) ? languageFilter : "ERROR"));
-        System.out.println("           - PATH OF LIST OF KEYWORDS TO CRAWL: '" + ((fullPathOfTweetKeywordFile != null) ? fullPathOfTweetKeywordFile : "NULL") + "'");
-        System.out.println("           - PATH OF CRAWLER OUTPUT FOLDER: '" + ((outputDirPath != null) ? outputDirPath : "NULL") + "'");
-        System.out.println("           - OUTPUT FORMAT: '" + ((outpuTweetFormat != null) ? outpuTweetFormat : "NULL") + "'");
+        System.out.println("           - PATH OF LIST OF KEYWORDS TO CRAWL: '"
+                + ((fullPathOfTweetKeywordFile != null) ? fullPathOfTweetKeywordFile : "NULL") + "'");
+        System.out.println("           - PATH OF CRAWLER OUTPUT FOLDER: '"
+                + ((outputDirPath != null) ? outputDirPath : "NULL") + "'");
+        System.out.println(
+                "           - OUTPUT FORMAT: '" + ((outpuTweetFormat != null) ? outpuTweetFormat : "NULL") + "'");
         System.out.println("   -");
-        System.out.println("   NUMBER OF TWEET KEYWORDS / LINES READ FROM THE LIST: " + ((getKeywords != null) ? getKeywords.size() : "READING ERROR"));
+        System.out.println("   NUMBER OF TWEET KEYWORDS / LINES READ FROM THE LIST: "
+                + ((getKeywords != null) ? getKeywords.size() : "READING ERROR"));
         System.out.println("***************************************************************************************\n");
 
         if (getKeywords == null || getKeywords.size() == 0) {
@@ -389,19 +402,18 @@ public class TwitterRESTKeywordSearchCrawler {
         }
         System.out.println("<><><><><><><><><><><><><><><><><><><>");
 
-
         System.out.println("-----------------------------------------------------------------------------------");
-        System.out.println("YOU'RE GOING TO USE " + ((consumerKey != null) ? consumerKey.size() : "ERROR") + " TWITTER DEVELOPER CREDENTIAL(S).");
-        //System.out.println("INCREASE YOUR CREDENTIAL NUMBER IN THE CONFIGURATION FILE IF YOU NEED TO INCREASE CRAWLING SPEED");
+        System.out.println("YOU'RE GOING TO USE " + ((consumerKey != null) ? consumerKey.size() : "ERROR")
+                + " TWITTER DEVELOPER CREDENTIAL(S).");
+        // System.out.println("INCREASE YOUR CREDENTIAL NUMBER IN THE CONFIGURATION FILE
+        // IF YOU NEED TO INCREASE CRAWLING SPEED");
         System.out.println("-----------------------------------------------------------------------------------\n");
-
 
         try {
             Thread.sleep(4000);
         } catch (InterruptedException e) {
             /* Do nothing */
         }
-
 
         startCrawling();
     }
