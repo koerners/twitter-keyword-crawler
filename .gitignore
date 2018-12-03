@@ -1,2 +1,11 @@
 
 *.class
+
+\.idea/
+
+*.xml
+
+\.vscode/
+
+
+\.settings/
